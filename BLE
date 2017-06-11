@@ -1,0 +1,10 @@
+#include <CurieBLE.h>
+BLEPeripheral blePeripheral;
+BLEService ledService("19B10000-E8F2-537E-4F6C-D104768A1214");
+BLEUnsignedCharCharChracteristic switchCharacteristic
+("19B10001-E8F2-537E-4F6C-D104768A1214",BLERead | BLEWrite);
+const int ledPin = 13;
+void setup() {  pinMode(ledPin, OUTPUT);  blePeripheral.setLocalName("101 Board");  blePeripheral.setAdvertisedServiceUnid(ledService.uuid());  blePeripheral.addAttribute(ledService);  blePeripheral.addAttribute(switchCharacteristic);  switchCharacteristic.setValue(0);  blePeripheral.begin();  }
+void loop() {BLECentral central =  blePeripheral.central();
+if (central) {    while (central.connected()){        if(switchCharacteristic.written()){            if(switchCharacteristic.value()){                digitalWrite(ledPin, HIGH);                else{                    digitalWrite(ledPin, LOW);        }      }    }  }  
+}
